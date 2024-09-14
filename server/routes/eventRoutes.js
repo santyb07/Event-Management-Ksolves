@@ -158,4 +158,32 @@ router.post('/events/:id/rsvp', async (req, res) => {
   }
 });
 
+// Delete attendee from event
+router.delete('/events/:id/rsvp', async (req, res) => {
+  const { userId } = req.body; // Expecting userId in the request body
+
+  try {
+    const event = await Event.findById(req.params.id);
+    if (!event) {
+      return res.status(404).send({ message: 'Event not found' });
+    }
+
+    // Find the index of the attendee to remove
+    const attendeeIndex = event.attendees.findIndex(attendee => attendee.userId.toString() === userId);
+    
+    if (attendeeIndex === -1) {
+      return res.status(404).send({ message: 'Attendee not found' });
+    }
+
+    // Remove the attendee from the array
+    event.attendees.splice(attendeeIndex, 1);
+
+    await event.save();
+    res.send({ message: 'Attendee removed successfully', attendees: event.attendees });
+  } catch (error) {
+    console.error('Error removing attendee:', error);
+    res.status(500).send({ message: 'Server error', error: error.message });
+  }
+});
+
 module.exports = router;

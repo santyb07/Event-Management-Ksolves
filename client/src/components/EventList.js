@@ -6,6 +6,8 @@ import './EventList.css'; // Import the CSS file for styling
 
 const EventList = () => {
   const [events, setEvents] = useState([]);
+  const currentUser = JSON.parse(localStorage.getItem("currentUser"))
+
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -44,8 +46,15 @@ const EventList = () => {
             <p className="event-card-time">Time: {event.time}</p>
             <div className="event-card-actions">
               <Link to={`/event/${event._id}`} className="event-card-button">View Details</Link>
-              <Link to={`/update-event/${event._id}`} className="event-card-button edit-button">Edit</Link>
-              <button onClick={() => handleDelete(event._id)} className="event-card-button delete-button">Delete</button>
+              
+                {currentUser && event.creator === currentUser.id && ( 
+                  <>
+                  <Link to={`/update-event/${event._id}`} className="event-card-button edit-button">Edit</Link>
+                  <button onClick={() => handleDelete(event._id)} className="event-card-button delete-button">Delete</button>
+                  </>
+
+                )}
+              
             </div>
           </div>
         ))}

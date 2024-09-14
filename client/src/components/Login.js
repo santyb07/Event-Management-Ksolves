@@ -29,7 +29,7 @@ const Login = () => {
       localStorage.setItem('currentUser', JSON.stringify(response.data.user)); // Store user details
       setSuccess('Login successful!'); // Optionally redirect or perform other actions
       toast.success("Login Successfull.. ")
-      navigate('/events'); // Redirect to events page after successful login
+      navigate('/'); // Redirect to events page after successful login
       setCredentials({ email: '', password: '' }); // Reset form
 
     } catch (error) {

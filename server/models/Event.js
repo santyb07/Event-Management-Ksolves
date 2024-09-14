@@ -23,6 +23,11 @@ const eventSchema = new mongoose.Schema({
     type:String,
     required:true
   },
+  creator: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User', // Reference to User model
+    required: true,
+  },
   attendees: [{
     userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }, // Reference to User model
     response: { type: String, enum: ['attending', 'not attending', 'maybe'], default: 'maybe' }, // RSVP response

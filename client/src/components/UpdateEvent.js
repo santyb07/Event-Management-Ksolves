@@ -52,6 +52,22 @@ const UpdateEvent = () => {
       console.error('Error response:', error.response.data);
     }
   };
+  
+  const handleRemoveAttendee = async (userId) => {
+    try {
+      await axios.delete(`http://localhost:5000/api/events/${id}/rsvp`, {
+        data: { userId }, // Send the userId in the request body
+      });
+      setEvent((prevEvent) => ({
+        ...prevEvent,
+        attendees: prevEvent.attendees.filter(attendee => attendee.userId !== userId),
+      }));
+      toast.success('Attendee removed successfully!');
+    } catch (error) {
+      console.error('Error removing attendee:', error);
+      alert('There was an error removing the attendee.');
+    }
+  };
 
   return (
     <div className="update-event-container">
@@ -89,13 +105,23 @@ const UpdateEvent = () => {
           required
           className="form-input"
         />
-        <input
-          name="attendees"
-          value={event.attendees.join(', ')} // Join array to display as a comma-separated string
-          onChange={handleChange}
-          placeholder="Attendees (comma separated)"
-          className="form-input"
-        />
+        <h2>Attendees</h2>
+        <h3>Total : {event.attendees.length}</h3>
+
+        <ul className="attendee-list">
+        {event.attendees.length > 0 ? (
+          event.attendees.map((attendee, index) => (
+            <div key={index} style={{display:'flex'}}>
+            <li key={index} className="attendee-item">{attendee.userId} - {attendee.response}</li>
+            <button onClick={() => handleRemoveAttendee(attendee.userId)} className="remove-attendee-button">Remove</button>
+            </div>
+          ))
+
+        ) : (
+          <li>No attendees yet.</li>
+        )}
+       </ul>
+
         <button type="submit" className="submit-button">Update Event</button>
       </form>
     </div>

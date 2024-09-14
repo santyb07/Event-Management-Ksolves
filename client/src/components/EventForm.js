@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { json, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import './EventForm.css'; // Import the CSS file for styling
 
@@ -11,20 +11,23 @@ const EventForm = () => {
     date: '',
     time: '',
     location:'',
-    attendees: '',
     reminder_sent: false,
   });
+  const currentUser = JSON.parse(localStorage.getItem("currentUser"))
   const navigate = useNavigate();
+  console.log(currentUser?.id)
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setEvent({ ...event, [name]: value });
   };
 
+  const handleLogin=()=>{
+    toast.error("Please Login to Create the Event")
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // Convert attendees input into an array
-    const attendeesArray = event.attendees.split(',').map(attendee => attendee.trim());
     
     const eventData = {
       name: event.name,
@@ -32,7 +35,7 @@ const EventForm = () => {
       date: event.date,
       time: event.time,
       location: event.location,
-      attendees: attendeesArray,
+      creator: currentUser?.id ,
       reminder_sent: event.reminder_sent,
     };
 
@@ -52,7 +55,6 @@ const EventForm = () => {
         date: '',
         time: '',
         location:'',
-        attendees: '',
         reminder_sent: false,
       });
 
@@ -108,14 +110,13 @@ const EventForm = () => {
           required
           className="form-input"
         />
-        <input
-          name="attendees"
-          value={event.attendees}
-          onChange={handleChange}
-          placeholder="Attendees (comma separated)"
-          className="form-input"
-        />
-        <button type="submit" className="submit-button">Add Event</button>
+        {
+          currentUser ?
+          <button type="submit" className="submit-button">Add Event</button>:
+          <button onClick={handleLogin} className="submit-button">Add Event</button>
+
+
+        }
       </form>
     </div>
   );

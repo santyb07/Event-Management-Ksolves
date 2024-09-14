@@ -10,7 +10,10 @@ const EventDetails = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [userResponse, setUserResponse] = useState(''); // State to track user response
-
+  const currentUser = JSON.parse(localStorage.getItem("currentUser"))
+  const handleLogin=()=>{
+    toast.error("Please Login to attend the event")
+  }
   useEffect(() => {
     const fetchEventDetails = async () => {
       try {
@@ -68,9 +71,20 @@ const EventDetails = () => {
 
       <h2>RSVP</h2>
       <div className="rsvp-buttons">
-        <button onClick={() => handleRSVP('attending')} className="rsvp-button attending">Attending</button>
+        {
+          currentUser ?
+          <>
+          <button onClick={() => handleRSVP('attending')} className="rsvp-button attending">Attending</button>
         <button onClick={() => handleRSVP('not attending')} className="rsvp-button not-attending">Not Attending</button>
         <button onClick={() => handleRSVP('maybe')} className="rsvp-button maybe">Maybe</button>
+          </>:
+          <>
+          <button onClick={handleLogin} className="rsvp-button attending">Attending</button>
+        <button onClick={handleLogin} className="rsvp-button not-attending">Not Attending</button>
+        <button onClick={handleLogin} className="rsvp-button maybe">Maybe</button>
+        </>
+        }
+        
       </div>
 
       <h2>Attendees</h2>
