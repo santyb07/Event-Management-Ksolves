@@ -1,6 +1,7 @@
 const nodemailer = require('nodemailer');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv')
+const cron = require("cron")
 const Event = require('../models/Event'); // Import the Event model
 const User = require('../models/User'); // Import the User model
 
@@ -60,3 +61,27 @@ const sendEmailReminders = async () => {
 
 // Execute the function
 sendEmailReminders();
+
+
+// Set up the cron job
+const job = new cron.CronJob(
+  '0 * * * *', // Every hour at minute 0
+  function () {
+    console.log('Sending email reminders...');
+    sendEmailReminders();
+  },
+  null, // onComplete
+  true, // start
+);
+
+// Start the cron job
+job.start();
+console.log('Cron job started.');
+
+// Handle process termination
+process.on('SIGINT', () => {
+  job.stop();
+  mongoose.connection.close();
+  console.log('Cron job stopped and database connection closed.');
+  process.exit();
+});
